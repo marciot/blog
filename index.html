@@ -1,0 +1,51 @@
+---
+layout: default
+cover: false
+---
+
+<header>
+  <h1>{{ site.title }}</h1>
+</header>
+
+<hr class="stylish"/>
+
+<main class="home-main">
+  {% assign category_list = "" | split: "" -%}
+
+  {% for category in site.categories -%}
+    {% assign newest = category[1].first -%}
+    {% capture item -%}
+      {{ newest.date | date: "%s" }}||{{ category[0] }}
+    {% endcapture -%}
+    {% assign category_list = category_list | push: item -%}
+  {% endfor -%}
+
+  {% assign category_list = category_list | sort | reverse -%}
+
+  {% for item in category_list -%}
+    {% assign parts = item | split: "||" -%}
+    {% assign category_name = parts[1] | strip -%}
+    {% assign posts = site.categories[category_name] -%}
+
+    <section id="{{ category_name }}">
+      <details open>
+        <summary><h3 class="home-page-heading">{{ category_name }}</h3></summary>
+        <div class="parent">
+          {% for category in site.categories -%}
+          {% if category.first == category_name -%}
+          {% for post in category.last -%}
+          <div class="post-wrapper">
+            <time class="post-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%m/%Y" }}</time>
+            <a class="post-link" href="{{ post.url | relative_url }}">
+              {{ post.title }}
+            </a>
+          </div>
+          {% endfor -%}
+          {% endif -%}
+          {% endfor -%}
+        </div>
+      </details>
+    </section>
+  {% endfor -%}
+
+</main>
